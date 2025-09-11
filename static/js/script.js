@@ -39,35 +39,36 @@ function typeHero(){
 typeHero();
 
 // Blogs data
-let blogs = [
-  {title:"Tech Innovations 2025",desc:"AI, Blockchain...",img:"https://source.unsplash.com/400x300/?technology"},
-  {title:"Top Travel Destinations",desc:"Pack your bags...",img:"https://source.unsplash.com/400x300/?travel"},
-  {title:"Delicious Food Recipes",desc:"Street food to gourmet...",img:"https://source.unsplash.com/400x300/?food"},
-  {title:"Healthy Lifestyle Tips",desc:"Fitness & diet...",img:"https://source.unsplash.com/400x300/?health"},
-  {title:"Finance Management",desc:"Invest smartly...",img:"https://source.unsplash.com/400x300/?finance"},
-  {title:"Photography Hacks",desc:"Take better shots...",img:"https://source.unsplash.com/400x300/?photography"}
-];
-let blogGrid=document.getElementById("blogGrid");
-let loadIndex=0,loadMore=3;
-function loadBlogs(){
-  for(let i=loadIndex;i<loadIndex+loadMore && i<blogs.length;i++){
-    let card=document.createElement("div"); card.className="col-md-4";
-    card.innerHTML=`<div class="card h-100">
-      <img src="${blogs[i].img}" class="card-img-top" alt="${blogs[i].title}">
-      <div class="card-body">
-        <h5 class="card-title">${blogs[i].title}</h5>
-        <p class="card-text">${blogs[i].desc}</p>
-        <div class="d-flex justify-content-between">
-          <span>❤️</span><span>💬</span><span>🔗</span>
-        </div>
-      </div></div>`;
+let blogs = JSON.parse(document.getElementById("blogs-data").textContent);
+let blogGrid = document.getElementById("blogGrid");
+let loadIndex = 0, loadMore = 3;
+
+function loadBlogs() {
+  for (let i = loadIndex; i < loadIndex + loadMore && i < blogs.length; i++) {
+    let card = document.createElement("div");
+    card.className = "col-md-4 mb-4";
+    card.innerHTML = `
+        <div class="card h-100 shadow-sm">
+          <img src="/media/${blogs[i].blog_image}" class="card-img-top" alt="${blogs[i].title}">
+          <div class="card-body"><a href="#">
+            <h5 class="card-title">${blogs[i].title}</h5></a>
+            <p class="card-text">${blogs[i].short_description}</p>
+            <div class="d-flex justify-content-between">
+              <span>❤️</span><span>💬</span><span>🔗</span>
+            </div>
+          </div>
+        </div>`;
     blogGrid.appendChild(card);
   }
-  loadIndex+=loadMore;
-  if(loadIndex>=blogs.length) document.getElementById("loadMoreBtn").style.display="none";
+  loadIndex += loadMore;
+  if (loadIndex >= blogs.length) {
+    document.getElementById("loadMoreBtn").style.display = "none";
+  }
 }
+
 loadBlogs();
 document.getElementById("loadMoreBtn").addEventListener("click", loadBlogs);
+
 
 // Featured authors
 let authors = [
