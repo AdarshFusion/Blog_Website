@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title%}MyBlog Home{% endblock   %}
+{% block content %}
+
+  <!-- Reading Progress -->
+  <div id="readingProgress"></div>
+
+  <!-- Hero Section -->
+  <section class="hero text-center d-flex align-items-center justify-content-center">
+    <div class="text-white">
+      <h1 class="display-4 fw-bold" id="heroText"></h1>
+      <p class="lead">Explore fresh perspectives, creative ideas, and stories from authors worldwide.</p>
+      <a href="#trending" class="btn btn-success btn-lg mt-3">Explore Blogs</a>
+    </div>
+  </section>
+
+  <!-- Trending Blogs -->
+  <section id="trending" class="container py-5"><a href="blog-detail.html">
+    <h2 class="text-success text-center mb-4">Trending Blogs</h2>
+    <div class="row g-4" id="blogGrid"></div>
+    <div class="text-center mt-4">
+      <button id="loadMoreBtn" class="btn btn-outline-success">Load More</button>
+    </div></a>
+  </section>
+
+  <!-- Featured Authors -->
+  <section class="py-5">
+    <div class="container text-center">
+      <h2 class="text-success mb-4">Featured Authors</h2>
+      <div class="row g-4 justify-content-center" id="authorList"></div>
+    </div>
+  </section>
+
+  <!-- Categories (Last Section) -->
+  <section class="categories py-5 bg-secondary bg-opacity-10">
+    <div class="container text-center">
+      <h2 class="text-success mb-4">Categories</h2>
+      <div class="d-flex flex-wrap justify-content-center gap-2" id="categoryList"></div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="py-5 bg-dark text-white text-center">
+    <h3 class="mb-3">Subscribe to Our Newsletter</h3>
+    <form class="d-flex justify-content-center gap-2 flex-wrap" id="newsletterForm">
+      <input type="email" class="form-control w-auto" placeholder="Your email" required>
+      <button type="submit" class="btn btn-success">Subscribe</button>
+    </form>
+  </section>
+{% endblock %}
