@@ -39,13 +39,13 @@
 
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-left me-3">
-                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="blog.html">Blogs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="trending.html">Trending</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Authors</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active{% endif %}" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'blogs' %}active{% endif %}" href="{% url 'blogs' %}">Blogs</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'trending' %}active{% endif %}" href="{% url 'trending' %}">Trending</a></li>
+                    <li class="nav-item"><a class="nav-link {% if  request.resolver_match.url_name == 'categories' %}active{% endif %}" href="{% url 'categories' %}">Categories</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'authors' %}active{% endif %}" href="{% url 'authors' %}">Authors</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">Contact</a></li>
 
                     <li><button id="darkModeBtn" class="btn btn-outline-light ms-2">🌙</button></li>
                 </ul>
@@ -56,12 +56,13 @@
 
     {% block content %}
     {% endblock %}
+    
     <!-- Back to top -->
     <button id="backToTop" title="Back to top">⬆️</button>
 
     <!-- Footer -->
     <footer class="bg-dark text-center text-success py-4 mt-5">
-        <p>© 2025 MyBlog. Made with ❤️ by Shubham.</p>
+        <p>© 2025 MyBlog. Made with ❤️ by Adarsh.</p>
         <p><a href="#" class="text-success">Privacy Policy</a> | <a href="#" class="text-success">Terms & Conditions</a>
         </p>
     </footer>

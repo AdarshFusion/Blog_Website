@@ -1,107 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Innovations 2025 - MyBlog</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body data-blog-id="blog1">
+{% extends 'base.html' %}
+{% block title%} {{blog_detail.title}} {% endblock %}
+{% block content %}
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold text-success" href="index.html">MyBlog</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-left me-3">
-          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="categories.html">Categories</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-          <li><button id="darkModeBtn" class="btn btn-outline-light ms-2">🌙</button></li>
+<!-- Breadcrumb -->
+<!-- <div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-light p-2 rounded">
+      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="categories.html">Technology</a></li>
+      <li class="breadcrumb-item"><a href="category-technology.html">AI & Innovation</a></li>
+      <li class="breadcrumb-item active" aria-current="page">AI Innovations 2025</li>
+    </ol>
+  </nav>
+</div> -->
+
+<!-- Blog Content Section -->
+<section class="container py-4">
+  <div class="row">
+    <!-- Main Blog Content -->
+    <div class="col-lg-8 blog-content">
+      <h1 class="fw-bold mb-3">{{blog_detail.title}}</h1>
+      <div class="d-flex align-items-center mb-3 text-white">
+        <img src="https://i.pravatar.cc/50" class="rounded-circle me-2" alt="Author">
+        <div>
+          <span><b>{{blog_detail.author}}</b> | {{blog_detail.created_at.date}}</span><br>
+          <small>⏱ 6 min read | 👁 {{blog_detail.views}} views</small>
+        </div>
+      </div>
+
+      <p>{{blog_detail.short_description}}</p>
+      <div class="hero-blog mb-4">
+        <img src="{{blog_detail.blog_image.url}}" class="img-fluid rounded" alt="AI Innovations">
+      </div>
+      <p>{{blog_detail.blog_body}}</p>
+    </div>
+
+    <!-- Sidebar: Related Blogs -->
+    <div class="col-lg-4">
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+          Related Blogs
+        </div>
+        <ul class="list-group list-group-flush" id="relatedBlogs">
+          <li class="list-group-item"><a href="blog-detail.html">Top AI Tools You Should Know</a></li>
+          <li class="list-group-item"><a href="blog-detail.html">Machine Learning Basics</a></li>
+          <li class="list-group-item"><a href="blog-detail.html">Future of Robotics</a></li>
+          <li class="list-group-item"><a href="blog-detail.html">Blockchain & Security</a></li>
         </ul>
       </div>
     </div>
-  </nav>
-
-  <!-- Breadcrumb -->
-  <div class="container mt-4">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb bg-light p-2 rounded">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item"><a href="categories.html">Technology</a></li>
-        <li class="breadcrumb-item"><a href="category-technology.html">AI & Innovation</a></li>
-        <li class="breadcrumb-item active" aria-current="page">AI Innovations 2025</li>
-      </ol>
-    </nav>
   </div>
+</section>
 
-  <!-- Blog Content Section -->
-  <section class="container py-4">
-    <div class="row">
-      <!-- Main Blog Content -->
-      <div class="col-lg-8 blog-content">
-        <h1 class="fw-bold mb-3">AI Innovations 2025</h1>
-        <div class="d-flex align-items-center mb-3 text-muted">
-          <img src="https://i.pravatar.cc/50" class="rounded-circle me-2" alt="Author">
-          <div>
-            <span><b>By Alice</b> | August 10, 2025</span><br>
-            <small>⏱ 6 min read | 👁 2.3k views</small>
-          </div>
-        </div>
-        
-        <div class="hero-blog mb-4">
-          <img src="https://images.unsplash.com/photo-1581092333770-0d7cda6c10b6?auto=format&fit=crop&w=900&q=80" class="img-fluid rounded" alt="AI Innovations">
-        </div>
-        
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus...</p>
-        <p>Phasellus ultrices nulla quis nibh. Quisque a lectus. Donec consectetuer ligula vulputate sem tristique cursus...</p>
-        <p>Nam nulla quam, gravida non, commodo a, sodales sit amet, nisi...</p>
+<!-- Comment Section -->
+<section class="container mt-5">
+  <h4 class="mb-3">💬 Comments</h4>
+  <div id="commentsContainer" class="mb-3"></div>
+  <div class="input-group mt-2">
+    <input type="text" class="form-control" id="commentInput" placeholder="Write a comment...">
+    <button class="btn btn-success" onclick="addComment('blog1')">Comment</button>
+  </div>
+</section>
 
-        <h3>Subheading 1</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-
-        <h3>Subheading 2</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-      </div>
-
-      <!-- Sidebar: Related Blogs -->
-      <div class="col-lg-4">
-        <div class="card shadow-sm mb-4">
-          <div class="card-header bg-success text-white">
-            Related Blogs
-          </div>
-          <ul class="list-group list-group-flush" id="relatedBlogs">
-            <li class="list-group-item"><a href="blog-detail.html">Top AI Tools You Should Know</a></li>
-            <li class="list-group-item"><a href="blog-detail.html">Machine Learning Basics</a></li>
-            <li class="list-group-item"><a href="blog-detail.html">Future of Robotics</a></li>
-            <li class="list-group-item"><a href="blog-detail.html">Blockchain & Security</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Comment Section -->
-  <section class="container mt-5">
-    <h4 class="mb-3">💬 Comments</h4>
-    <div id="commentsContainer" class="mb-3"></div>
-    <div class="input-group mt-2">
-      <input type="text" class="form-control" id="commentInput" placeholder="Write a comment...">
-      <button class="btn btn-success" onclick="addComment('blog1')">Comment</button>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-dark text-center text-success py-4 mt-5">
-    <p>© 2025 MyBlog. Made with ❤️ by Shubham.</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
-</html>
+{% endblock %}

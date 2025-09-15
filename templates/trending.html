@@ -1,85 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Trending Blogs - MyBlog</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold text-success" href="index.html">MyBlog</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav me-3">
-          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="blog.html">Blogs</a></li>
-          <li class="nav-item"><a class="nav-link active" href="trending.html">Trending</a></li>
-          <li class="nav-item"><a class="nav-link" href="categories.html">Categories</a></li>
-          <li class="nav-item"><a class="nav-link" href="authors.html">Authors</a></li>
-          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-          <li><button id="darkModeBtn" class="btn btn-outline-light ms-2">🌙</button></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+{% extends 'base.html' %}
+{% block title%}MyBlog Home{% endblock %}
+{% block content %}
 
   <!-- Trending Section -->
   <section class="container py-5">
-    <h2 class="text-success text-center mb-4">🔥 Trending Blogs</h2>
-    <div class="row g-4">
-      <!-- Blog Card Example -->
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <img src="assets/images/blog1.jpg" class="card-img-top" alt="Blog 1">
-          <div class="card-body">
-            <h5 class="card-title">How AI is Changing the Future</h5>
-            <p class="card-text text-muted">
-               Lorem ipsum dolor, sit amet consectetur adipisicing elit. Est quaerat veritatis impedit corrupti? Saepe nam eligendi molestias molestiae, possimus impedit, nemo tempora mollitia expedita voluptatibus, quod minima odit dolore ab!Discover how artificial intelligence is revolutionizing industries worldwide...</p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, hic ad. Ut dolorem odit corporis similique iure reiciendis voluptatem adipisci, porro distinctio! Animi porro, saepe facilis consequuntur minima voluptate. Libero.
-               <a href="blog.html?id=1" class="btn btn-success">Read More</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <img src="assets/images/blog2.jpg" class="card-img-top" alt="Blog 2">
-          <div class="card-body">
-            <h5 class="card-title">10 Best Travel Spots in 2025</h5>
-            <p class="card-text text-muted">Planning a trip? Here are the most exciting destinations you must explore...</p>
-            <a href="blog.html?id=2" class="btn btn-success">Read More</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card shadow-sm h-100">
-          <img src="assets/images/blog3.jpg" class="card-img-top" alt="Blog 3">
-          <div class="card-body">
-            <h5 class="card-title">Healthy Lifestyle Tips</h5>
-            <p class="card-text text-muted">Simple and effective ways to stay healthy and energetic everyday...</p>
-            <a href="blog.html?id=3" class="btn btn-success">Read More</a>
-          </div>
+  <h2 class="text-success text-center mb-4">Trending Blogs</h2>
+  <div class="row g-4">
+    {% for blog in trending_blogs %}
+    <div class="col-md-4 col-sm-6">
+      <div class="card h-100 shadow-sm">
+        <img src="{{ blog.blog_image.url }}" class="card-img-top" alt="{{ blog.title }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ blog.title }}</h5>
+          <p class="card-text">{{ blog.short_description }}</p>
+          <a href="{% url 'blog-detail' blog.id %}" class="btn btn-success">Read More</a>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-dark text-center text-success py-4 mt-5">
-    <p>© 2025 MyBlog. Made with ❤️ by Shubham.</p>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

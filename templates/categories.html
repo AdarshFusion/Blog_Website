@@ -1,117 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Categories - MyBlog</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title%}Categories - MyBlog{% endblock %}
+{% block content %}
 
-  <!-- Navbar (same as home) -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold text-success" href="index.html">MyBlog</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-left me-3">
-           <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="blog.html">Blogs</a></li>
-          <li class="nav-item"><a class="nav-link" href="trending.html">Trending</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Categories</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Authors</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-        </ul>
+
+<!-- Categories Section -->
+<section class="container py-5">
+  <h2 class="text-success text-center mb-4">Categories</h2>
+  <div class="row g-4">
+    {% for i in category %}
+    <div class="col-md-4 col-sm-6">
+      <div class="card h-100 shadow-sm">
+        <img src="{{i.category_image.url}}"
+          class="card-img-top" alt="Technology">
+        <div class="card-body text-center">
+          <h5 class="card-title">{{i.category_name}}</h5>
+          <p class="card-text">
+            {{i.category_text}}
+          </p>
+          <a href="{% url 'category-blog' i.category_name %}" class="btn btn-success">View Blogs</a>
+        </div>
       </div>
     </div>
-  </nav>
+    {% endfor %}
+  </div>
+</section>
 
-  <!-- Categories Section -->
-  <section class="container py-5">
-    <h2 class="text-success text-center mb-4">Categories</h2>
-    <div class="row g-4">
-
-      <!-- Technology -->
-      <div class="col-md-4 col-sm-6">
-        <div class="card h-100 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Technology">
-          <div class="card-body text-center">
-            <h5 class="card-title">Technology</h5>
-            <p class="card-text">AI, gadgets, software & tech news.</p>
-            <a href="category-technology.html" class="btn btn-success">View Blogs</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Travel -->
-      <div class="col-md-4 col-sm-6">
-        <div class="card h-100 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Travel">
-          <div class="card-body text-center">
-            <h5 class="card-title">Travel</h5>
-            <p class="card-text">Destinations, tips & guides.</p>
-            <a href="category-travel.html" class="btn btn-success">View Blogs</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Food -->
-      <div class="col-md-4 col-sm-6">
-        <div class="card h-100 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Food">
-          <div class="card-body text-center">
-            <h5 class="card-title">Food</h5>
-            <p class="card-text">Recipes, street food & gourmet tips.</p>
-            <a href="category-food.html" class="btn btn-success">View Blogs</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Lifestyle -->
-      <div class="col-md-4 col-sm-6">
-        <div class="card h-100 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1518611012118-f5d3c0b39c52?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Lifestyle">
-          <div class="card-body text-center">
-            <h5 class="card-title">Lifestyle</h5>
-            <p class="card-text">Fitness, fashion & daily routines.</p>
-            <a href="category-lifestyle.html" class="btn btn-success">View Blogs</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Health -->
-      <div class="col-md-4 col-sm-6">
-        <div class="card h-100 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Health">
-          <div class="card-body text-center">
-            <h5 class="card-title">Health</h5>
-            <p class="card-text">Wellness, nutrition & mental health.</p>
-            <a href="category-health.html" class="btn btn-success">View Blogs</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Finance -->
-      <div class="col-md-4 col-sm-6">
-        <div class="card h-100 shadow-sm">
-          <img src="https://images.unsplash.com/photo-1554224154-22dec7ec8818?auto=format&fit=crop&w=400&q=80" class="card-img-top" alt="Finance">
-          <div class="card-body text-center">
-            <h5 class="card-title">Finance</h5>
-            <p class="card-text">Investing, budgeting & smart money tips.</p>
-            <a href="category-finance.html" class="btn btn-success">View Blogs</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+{% endblock %}
