@@ -40,3 +40,28 @@ class Blog(models.Model):
     is_feacherd = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return f'{self.title}'
+
+class Comment(models.Model):
+    blog = models.ForeignKey(Blog, related_name='comments', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='repl')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment by {self.user.username}| {self.content}'
+    
+class Reply(models.Model):
+    comment = models.ForeignKey(Comment, related_name='replies', on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='sub_replies', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='replies', on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Reply by {self.user.username}| {self.comment} | {self.content}'
+    

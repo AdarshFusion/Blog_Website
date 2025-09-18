@@ -82,24 +82,27 @@ if (!topAuthorBlogs || topAuthorBlogs.length === 0) {
 
 
 // Categories}
-let categories = JSON.parse(document.getElementById("categories-data").textContent);
-let categoryList = document.getElementById("categoryList");
-categories.forEach(c => {
-  let span = document.createElement("span");
-  span.className = "badge bg-transparent border border-secondary rounded me-2 p-2";
-  span.innerHTML = `<a href="/category-blog/${c}">${c}</a>`;
-  // a.textContent = c;
-  categoryList.appendChild(span);
-});
+// let categories = JSON.parse(document.getElementById("categories-data").textContent);
+// let categoryList = document.getElementById("categoryList");
+// categories.forEach(c => {
+//   let span = document.createElement("span");
+//   span.className = "badge rounded-pill bg-transparent test";
+//   span.innerHTML = `<a class="btn text-black fs-6" href="/category-blog/${c}">${c}</a>`;
+//   // a.textContent = c;
+//   categoryList.appendChild(span);
+// });
+
+
+
 
 
 // Newsletter submit
-document.getElementById("newsletterForm").addEventListener("submit", e => {
-  e.preventDefault();
-  alert("Subscribed!");
-});
+// document.getElementById("newsletterForm").addEventListener("submit", e => {
+//   e.preventDefault();
+//   alert("Subscribed!");
+// });
 
-let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser")) || null;
+// let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser")) || null;
 
 // Signup Form
 const signupForm = document.getElementById("signupForm");
@@ -125,109 +128,5 @@ signupForm && signupForm.addEventListener("submit", (e) => {
 
 
 
-// ==================== Blog Comment System ====================
-
-function addComment(blogId) {
-  // Check if user is logged in
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-  if (!loggedInUser) {
-    // Redirect to login/signup page if not logged in
-    alert("You must login/signup to comment!");
-    window.location.href = "auth.html";
-    return;
-  }
-
-  // Get the comment text
-  const commentInput = document.getElementById("commentInput");
-  const text = commentInput.value.trim();
-  if (!text) return;
-
-  // Load existing comments from localStorage
-  const comments = JSON.parse(localStorage.getItem("comments")) || {};
-  if (!comments[blogId]) comments[blogId] = [];
-
-  // Add the new comment
-  comments[blogId].push({ user: loggedInUser.name, text });
-  localStorage.setItem("comments", JSON.stringify(comments));
-
-  // Clear input and reload comments
-  commentInput.value = "";
-  loadComments(blogId);
-}
-
-// Function to load comments on blog detail page
-function loadComments(blogId) {
-  const comments = JSON.parse(localStorage.getItem("comments")) || {};
-  const blogComments = comments[blogId] || [];
-
-  const commentsContainer = document.getElementById("commentsContainer");
-  commentsContainer.innerHTML = "";
-
-  blogComments.forEach(c => {
-    const div = document.createElement("div");
-    div.className = "border p-2 mb-2 rounded";
-    div.innerHTML = `<strong>${c.user}</strong>: ${c.text}`;
-    commentsContainer.appendChild(div);
-  });
-}
-
-// On Blog Page Load
-const blogId = document.body.getAttribute("data-blog-id");
-if (blogId) loadComments(blogId);
 
 
-
-/* Blog Detail Page Styles */
-function addComment(blogId) {
-  const input = document.getElementById("commentInput");
-  const text = input.value.trim();
-  if (!text) return;
-
-  const commentDiv = document.createElement("div");
-  commentDiv.classList.add("comment");
-  commentDiv.innerHTML = `
-    <strong>User</strong>: ${text}
-    <div class="comment-actions">
-      <button onclick="likeComment(this)">👍 Like (<span>0</span>)</button>
-      <button onclick="replyComment(this)">↩ Reply</button>
-    </div>
-    <div class="replies"></div>
-  `;
-
-  document.getElementById("commentsContainer").appendChild(commentDiv);
-  input.value = "";
-}
-
-function likeComment(button) {
-  const span = button.querySelector("span");
-  span.textContent = parseInt(span.textContent) + 1;
-}
-
-function replyComment(button) {
-  const replyBox = document.createElement("div");
-  replyBox.innerHTML = `
-    <input type="text" placeholder="Reply..." class="form-control mb-2">
-    <button class="btn btn-sm btn-success" onclick="postReply(this)">Post Reply</button>
-  `;
-  button.parentElement.parentElement.querySelector(".replies").appendChild(replyBox);
-}
-
-function postReply(button) {
-  const replyBox = button.parentElement;
-  const text = replyBox.querySelector("input").value.trim();
-  if (!text) return;
-
-  const replyDiv = document.createElement("div");
-  replyDiv.classList.add("comment");
-  replyDiv.innerHTML = `
-    <strong>User</strong>: ${text}
-    <div class="comment-actions">
-      <button onclick="likeComment(this)">👍 Like (<span>0</span>)</button>
-      <button onclick="replyComment(this)">↩ Reply</button>
-    </div>
-    <div class="replies"></div>
-  `;
-
-  replyBox.parentElement.appendChild(replyDiv);
-  replyBox.remove();
-}

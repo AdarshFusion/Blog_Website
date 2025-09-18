@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Owner Dashboard — MyBlog</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+  /* ---------------- Global theme (matches site) ---------------- */
+  :root{
+    --accent:#4caf50;
+    --accent-2:#00c26a;
+    --bg:#f8f9fa;
+    --card-shadow: 0 8px 24px rgba(16,24,40,0.06);
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial;
+    background:var(--bg);
+    color:#0b1220;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* App layout */
+  .app { display:flex; min-height:100vh; }
+  .sidebar {
+    width:260px; background:#0f1720; color:#cfeee3;
+    padding:22px; flex:0 0 260px; position:sticky; top:0; height:100vh;
+    box-shadow: 2px 0 12px rgba(2,6,23,0.08);
+  }
+  .brand { font-weight:700; font-size:1.15rem; color:var(--accent); margin-bottom:12px; display:flex; gap:10px; align-items:center;}
+  .sidebar .menu a { display:flex; gap:12px; align-items:center; padding:10px 12px; border-radius:8px; color:#cfeee3; text-decoration:none; margin-bottom:6px; }
+  .sidebar .menu a.active, .sidebar .menu a:hover { background:rgba(76,175,80,0.08); color:var(--accent); transform:translateX(6px); }
+  .sidebar .footer { position:absolute; bottom:20px; left:22px; right:22px; font-size:13px; color:#9fbfb0; }
+
+  .main {
+    flex:1; padding:18px 22px; min-height:100vh; overflow:auto;
+  }
+  .topbar { display:flex; gap:12px; align-items:center; margin-bottom:18px; }
+  .search-input { width:360px; max-width:42vw; }
+  .top-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+
+  .card { background:#fff; border-radius:12px; box-shadow:var(--card-shadow); border:0; }
+  .card .card-body { padding:18px; }
+
+  h2.section-title { font-size:1.25rem; margin:0; color:#0b1220; }
+
+  /* stats tiles */
+  .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:18px; }
+  .stat-tile { padding:14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .stat-tile .label { color:#6b7280; font-size:13px; }
+  .stat-tile .value { font-weight:700; font-size:1.35rem; color:#0b1220; }
+
+  /* tables */
+  .table-wrapper { overflow:auto; max-height:420px; }
+  table th, table td { vertical-align:middle; }
+
+  /* forms */
+  .form-control, .form-select { border-radius:10px; }
+
+  /* small UI */
+  .chip { display:inline-flex; gap:8px; align-items:center; padding:6px 10px; border-radius:999px; background:#f1f6f2; color:#0b1220; font-weight:600; font-size:13px; }
+  .badge-pending { background:#ffecb5; color:#6b4a00; }
+  .muted { color:#6b7280; }
+
+  /* responsive */
+  @media (max-width:900px){
+    .sidebar{ display:none }
+    .search-input { width:160px }
+  }
+
+  /* Dark mode (toggle) */
+  body.dark-mode { background:#0b1220; color:#e6f5ea; }
+  body.dark-mode .card { background:#0c1220; box-shadow:none; border:1px solid rgba(255,255,255,0.03); }
+  body.dark-mode .sidebar { background:#071018; color:#bfe9d6; }
+  body.dark-mode .sidebar .footer { color:#93c9b5; }
+  body.dark-mode .chip { background:#082023; color:#cfeee3; }
+
+  /* utilities */
+  .flex-row { display:flex; gap:12px; align-items:center; }
+  .grow { flex:1 }
+  .small { font-size:13px }
+  .mb-12 { margin-bottom:12px }
+  .mt-12 { margin-top:12px }
+
+  /* custom modal image preview */
+  .img-preview { max-width:120px; border-radius:8px; object-fit:cover; border:1px solid #e6efea; }
+
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand"><i class="fa fa-feather"></i> MyBlog Owner</div>
+    <div class="small muted mb-3">Full site control panel</div>
+
+    <nav class="menu mb-3">
+      <a href="#" data-section="overview" class="active"><i class="fa fa-chart-line"></i> Overview</a>
+      <a href="#" data-section="posts"><i class="fa fa-file-lines"></i> Posts</a>
+      <a href="#" data-section="categories"><i class="fa fa-tags"></i> Categories</a>
+      <a href="#" data-section="users"><i class="fa fa-users"></i> Users</a>
+      <a href="#" data-section="comments"><i class="fa fa-comments"></i> Comments</a>
+      <a href="#" data-section="messages"><i class="fa fa-envelope"></i> Messages</a>
+      <a href="#" data-section="analytics"><i class="fa fa-chart-pie"></i> Analytics</a>
+      <a href="#" data-section="settings"><i class="fa fa-gear"></i> Settings</a>
+    </nav>
+
+    <div style="margin-top:20px;">
+      <button class="btn btn-sm" id="btnAddPost" style="background:var(--accent); color:white; border-radius:8px"><i class="fa fa-plus"></i> Add Post</button>
+    </div>
+
+    <div class="footer">
+      <div class="tiny">Signed in as</div>
+      <div class="flex-row mt-2">
+        <img src="https://i.pravatar.cc/42?img=5" style="width:42px;height:42px;border-radius:50%;border:2px solid var(--accent)">
+        <div>
+          <div style="font-weight:700">Shubham</div>
+          <div class="muted small">Owner</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div>
+        <h2 class="section-title">Site Owner Dashboard</h2>
+        <div class="muted small">Full control — manage posts, users, categories, comments, analytics & settings</div>
+      </div>
+
+      <input class="form-control form-control-sm search-input" id="globalSearch" placeholder="Search posts, users, comments...">
+
+      <div class="top-actions">
+        <button class="btn btn-outline-secondary btn-sm" id="btnExport"><i class="fa fa-file-export"></i> Export</button>
+        <button class="btn btn-outline-secondary btn-sm" id="btnToggleDark">🌙</button>
+        <div class="dropdown">
+          <a class="btn btn-outline-secondary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Owner</a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT AREA: multiple sections, only one visible at a time -->
+    <div id="content">
+
+      <!-- SECTION: Overview -->
+      <section id="section-overview" class="mb-4">
+        <div class="stats-grid mb-3">
+          <div class="card stat-tile p-3">
+            <div>
+              <div class="label">Total Users</div>
+              <div class="value" id="stat-users">0</div>
+              <div class="small muted">Active / total</div>
+            </div>
+            <div><i class="fa fa-users fa-2x muted"></i></div>
+          </div>
+
+          <div class="card stat-tile p-3">
+            <div>
+              <div class="label">Total Posts</div>
+              <div class="value" id="stat-posts">0</div>
+              <div class="small muted">Published / drafts</div>
+            </div>
+            <div><i class="fa fa-file-lines fa-2x muted"></i></div>
+          </div>
+
+          <div class="card stat-tile p-3">
+            <div>
+              <div class="label">Comments</div>
+              <div class="value" id="stat-comments">0</div>
+              <div class="small muted">Pending / approved</div>
+            </div>
+            <div><i class="fa fa-comments fa-2x muted"></i></div>
+          </div>
+
+          <div class="card stat-tile p-3">
+            <div>
+              <div class="label">Views (30d)</div>
+              <div class="value" id="stat-views">0</div>
+              <div class="small muted">Last 30 days</div>
+            </div>
+            <div><i class="fa fa-eye fa-2x muted"></i></div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-lg-8">
+            <div class="card p-3">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Recent Posts</h5>
+                <div><button class="btn btn-sm btn-outline-secondary" id="refreshPostsBtn"><i class="fa fa-sync"></i> Refresh</button></div>
+              </div>
+              <div class="table-wrapper">
+                <table class="table table-hover mb-0" id="overviewPostsTable">
+                  <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Status</th><th>Views</th><th>Actions</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card p-3 mb-3">
+              <h6 class="mb-2">Quick Actions</h6>
+              <div class="d-grid gap-2">
+                <button class="btn btn-success" id="qaAddPost"><i class="fa fa-plus"></i> Add New Post</button>
+                <button class="btn btn-outline-secondary" id="qaManageUsers"><i class="fa fa-users"></i> Manage Users</button>
+                <button class="btn btn-outline-secondary" id="qaComments"><i class="fa fa-comments"></i> Review Comments</button>
+              </div>
+            </div>
+
+            <div class="card p-3">
+              <h6>Activity</h6>
+              <ul class="list-group list-group-flush mt-2" id="activityList" style="max-height:220px; overflow:auto;"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Posts -->
+      <section id="section-posts" style="display:none;" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Manage Posts</h4>
+          <div class="d-flex gap-2">
+            <input id="postSearch" class="form-control form-control-sm" placeholder="Search posts by title...">
+            <button class="btn btn-success btn-sm" id="btnNewPost"><i class="fa fa-plus"></i> New Post</button>
+            <button class="btn btn-outline-danger btn-sm" id="btnBulkDeletePosts">Delete Selected</button>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <div class="table-wrapper">
+            <table class="table table-hover" id="postsTable">
+              <thead><tr><th><input type="checkbox" id="selectAllPosts"></th><th>Title</th><th>Author</th><th>Category</th><th>Status</th><th>Views</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card p-3">
+          <h6>Add / Edit Post</h6>
+          <form id="postForm">
+            <input type="hidden" id="postId">
+            <div class="row g-2">
+              <div class="col-md-6">
+                <input id="postTitle" class="form-control" placeholder="Post title" required>
+              </div>
+              <div class="col-md-3">
+                <input id="postAuthor" class="form-control" placeholder="Author" required>
+              </div>
+              <div class="col-md-3">
+                <select id="postCategory" class="form-select"></select>
+              </div>
+            </div>
+
+            <div class="row g-2 mt-2">
+              <div class="col-md-9">
+                <textarea id="postContent" class="form-control" rows="6" placeholder="Post content (HTML allowed)"></textarea>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-2">Feature image</div>
+                <img id="postImagePreview" class="img-preview mb-2" src="" alt="" style="display:none;">
+                <input type="file" id="postImage" accept="image/*" class="form-control form-control-sm">
+                <div class="form-check mt-2">
+                  <input type="checkbox" id="postPublished" class="form-check-input"><label class="form-check-label">Published</label>
+                </div>
+                <button class="btn btn-accent mt-3 btn-success w-100" type="submit"><i class="fa fa-save"></i> Save Post</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- SECTION: Categories -->
+      <section id="section-categories" style="display:none;" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Categories & Subcategories</h4>
+          <div class="d-flex gap-2">
+            <input id="categoryInput" class="form-control form-control-sm" placeholder="New category name">
+            <button class="btn btn-success btn-sm" id="btnAddCategory">Add</button>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <div id="categoriesList"></div>
+        </div>
+      </section>
+
+      <!-- SECTION: Users -->
+      <section id="section-users" style="display:none;" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Manage Users</h4>
+          <div class="d-flex gap-2">
+            <input id="userSearch" class="form-control form-control-sm" placeholder="Search users...">
+            <button class="btn btn-success btn-sm" id="btnAddUser">Add User</button>
+            <button class="btn btn-outline-danger btn-sm" id="btnBulkDeleteUsers">Delete Selected</button>
+          </div>
+        </div>
+
+        <div class="card p-3 mb-3">
+          <table class="table table-hover" id="usersTable">
+            <thead><tr><th><input type="checkbox" id="selectAllUsers"></th><th>Avatar</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="card p-3">
+          <h6>Add / Edit User</h6>
+          <form id="userForm">
+            <input type="hidden" id="userId">
+            <div class="row g-2">
+              <div class="col-md-4"><input id="userName" class="form-control" placeholder="Full name" required></div>
+              <div class="col-md-4"><input id="userEmail" class="form-control" placeholder="Email" required></div>
+              <div class="col-md-2"><select id="userRole" class="form-select"><option>user</option><option>author</option><option>admin</option></select></div>
+              <div class="col-md-2"><button class="btn btn-success w-100" type="submit">Save</button></div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- SECTION: Comments -->
+      <section id="section-comments" style="display:none;" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Comments Moderation</h4>
+          <input id="commentSearch" class="form-control form-control-sm" style="width:320px" placeholder="Search comments...">
+        </div>
+
+        <div class="card p-3">
+          <div class="table-wrapper">
+            <table class="table table-hover" id="commentsTable">
+              <thead><tr><th>User</th><th>Comment</th><th>Post</th><th>Status</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Messages -->
+      <section id="section-messages" style="display:none;" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Messages & Contact Requests</h4>
+        </div>
+
+        <div class="card p-3">
+          <div class="table-wrapper">
+            <table class="table table-hover" id="messagesTable">
+              <thead><tr><th>From</th><th>Email</th><th>Message</th><th>Received</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Analytics -->
+      <section id="section-analytics" style="display:none;" class="mb-4">
+        <div class="row g-3">
+          <div class="col-lg-8">
+            <div class="card p-3">
+              <h5>Traffic (last 14 days)</h5>
+              <canvas id="chartTraffic" style="height:240px"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card p-3 mb-3">
+              <h6>Top Posts</h6>
+              <ol id="analyticsTopPosts"></ol>
+            </div>
+            <div class="card p-3">
+              <h6>Top Authors</h6>
+              <ol id="analyticsTopAuthors"></ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Settings -->
+      <section id="section-settings" style="display:none;" class="mb-4">
+        <div class="card p-3 mb-3">
+          <h5>Site Settings</h5>
+          <form id="settingsForm">
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label class="small">Site Title</label>
+                <input id="settingSiteTitle" class="form-control" placeholder="MyBlog">
+              </div>
+              <div class="col-md-4">
+                <label class="small">Footer Text</label>
+                <input id="settingFooterText" class="form-control">
+              </div>
+              <div class="col-md-2">
+                <label class="small">Posts per page</label>
+                <input id="settingPerPage" type="number" class="form-control" min="1">
+              </div>
+              <div class="col-md-2">
+                <label class="small">&nbsp;</label>
+                <button class="btn btn-success w-100" type="submit">Save</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="card p-3">
+          <h6>Danger Zone</h6>
+          <div class="mt-2">
+            <button id="btnClearData" class="btn btn-outline-danger">Clear demo data (localStorage)</button>
+            <button id="btnBackup" class="btn btn-outline-secondary ms-2">Download Backup JSON</button>
+          </div>
+        </div>
+      </section>
+
+    </div> <!-- content -->
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1200">
+  <div id="mainToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" style="display:none;">
+    <div class="d-flex">
+      <div class="toast-body" id="toastBody">Saved</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="hideToast()"></button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPTS -->
+
+<script>
+  /* =========================
+     Admin Dashboard (Django connected)
+     ========================= */
+
+  let DATA = {};
+
+  /* ---------- Load data from Django ---------- */
+  async function loadData() {
+    try {
+      const res = await fetch("/dashboard-data/");
+      const raw = await res.json();
+
+      // 🔹 Map backend → frontend field names
+      DATA = {
+        users: raw.users.map(u => ({
+          id: u.id_no,
+          name: u.name,
+          email: u.email_id,
+          role: u.role ? "admin" : "user",   // map is_staff boolean → role
+          joined: u.joined,
+          avatar: "https://i.pravatar.cc/48?u=" + encodeURIComponent(u.email_id)
+        })),
+        posts: raw.posts.map(p => ({
+          id: p.id_no,
+          title: p.title_blog,
+          author: p.author_name,
+          category: p.category_name,
+          published: true,   // adjust if you add published field
+          views: p.views_value,
+          content: "",
+          image: "",
+          featured: false
+        })),
+        categories: raw.categories.map(c => ({
+          id: c.id_no,
+          name: c.name,
+          subs: []
+        })),
+        comments: raw.comments.map(c => ({
+          id: c.id_no,
+          postId: c.postId,
+          user: c.user_name,
+          text: c.text,
+          status: "approved",   // adjust if you add status in backend
+          date: c.date
+        })),
+        messages: raw.messages || [],
+        analytics: raw.analytics || { viewsLast14: [] },
+        activity: raw.activity || []
+      };
+
+      refreshAll();
+    } catch (err) {
+      console.error("Error loading data:", err);
+      alert("Could not load dashboard data. Check backend.");
+    }
+  }
+
+  /* ---------- Safe placeholder saveData ---------- */
+  function saveData() {
+    console.log("In real app, send updates back to backend API", DATA);
+    showToast("Changes saved (frontend only)");
+  }
+
+  /* ---------- Init on page load ---------- */
+  document.addEventListener("DOMContentLoaded", () => {
+    // nav + actions already in your code
+    loadData();
+  });
+
+</script>
+
+
+
+<script>
+/* =========================
+   Admin Single-Page Dashboard (frontend demo)
+   - All UI + interactive logic in this file
+   - Data persisted to localStorage under key ADMIN_DASH_DATA
+   - Replace storage read/write spots with API calls when integrating backend
+   ========================= */
+
+// const STORAGE_KEY = 'ADMIN_DASH_DATA_v1';
+
+/* ---------- Default demo data ---------- */
+const DEFAULT = {
+  settings: { siteTitle:'Think Smart', footerText:'© 2025 MyBlog. Made with ❤️ by Adarsh.', perPage:9 },
+  users: [
+    { id:'u1', name:'Shubham', email:'owner@myblog.com', role:'admin', joined:'2023-11-04', avatar:'https://i.pravatar.cc/48?img=5' },
+    { id:'u2', name:'Alice Johnson', email:'alice@example.com', role:'author', joined:'2024-02-10', avatar:'https://i.pravatar.cc/48?img=10' },
+    { id:'u3', name:'Bob Kumar', email:'bob@example.com', role:'user', joined:'2024-05-21', avatar:'https://i.pravatar.cc/48?img=7' }
+  ],
+  categories: [
+    { id:'c1', name:'Technology', subs:['AI & Innovation','Web'] },
+    { id:'c2', name:'Travel', subs:['Destinations','Tips'] },
+    { id:'c3', name:'Food', subs:['Recipes','Reviews'] }
+  ],
+  posts: [
+    { id:'p101', title:'AI Innovations 2025', author:'Alice Johnson', category:'AI & Innovation', published:true, views:1520, featured:true, image:'', content:'Short summary about AI innovations.' },
+    { id:'p102', title:'Top Travel Destinations', author:'Bob Kumar', category:'Travel', published:true, views:890, featured:false, image:'', content:'Short summary about travel destinations.' },
+    { id:'p103', title:'Delicious Food Recipes', author:'Alice Johnson', category:'Food', published:false, views:120, featured:false, image:'', content:'Draft about recipes.' }
+  ],
+  comments: [
+    { id:'cm1', postId:'p101', user:'Sonia', text:'Great article!', status:'approved', date:'2025-08-12' },
+    { id:'cm2', postId:'p101', user:'Ravi', text:'Can you add sources?', status:'pending', date:'2025-08-13' }
+  ],
+  messages: [
+    { id:'m1', name:'Visitor A', email:'v@x.com', text:'Hello, how to guest post?', date:'2025-08-14' }
+  ],
+  analytics: {
+    viewsLast14: Array.from({length:14}, (_,i)=>Math.floor(300 + Math.random()*500))
+  },
+  activity: ['Initialized demo data','Alice published "AI Innovations 2025"']
+};
+
+/* ---------- Helpers: load/save ---------- */
+// function loadData(){
+//   const raw = localStorage.getItem(STORAGE_KEY);
+//   if(!raw){ localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT)); return JSON.parse(JSON.stringify(DEFAULT)); }
+//   try { return JSON.parse(raw); } catch(e) { localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT)); return JSON.parse(JSON.stringify(DEFAULT)); }
+// }
+// function saveData(){
+//   localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA));
+//   showToast('Saved');
+// }
+function uid(prefix='id'){ return prefix + Date.now() + Math.floor(Math.random()*999); }
+function showToast(msg){ const t=document.getElementById('mainToast'); document.getElementById('toastBody').innerText=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',2200);}
+function hideToast(){ document.getElementById('mainToast').style.display='none'; }
+
+// /* ---------- State ---------- */
+// // let DATA = loadData();
+//   let DATA = {};
+
+//   // async function loadData() {
+//   //   const res = await fetch("/dashboard-data/");  // URL of your Django view
+//   //   DATA = await res.json();
+//   //   refreshAll();
+//   // }
+
+
+//   async function loadData() {
+//     const res = await fetch("/dashboard-data/");
+//     const raw = await res.json();
+
+//     DATA = {
+//       users: raw.users.map(u => ({
+//         id: u.id_no,
+//         name: u.name,
+//         email: u.email_id,
+//         role: u.role ? "admin" : "user", // map staff boolean
+//         joined: u.joined,
+//         avatar: "https://i.pravatar.cc/48?u=" + encodeURIComponent(u.email_id)
+//       })),
+//       posts: raw.posts.map(p => ({
+//         id: p.id_no,
+//         title: p.title_blog,
+//         author: p.author_name,
+//         category: p.category_name,
+//         published: true,  // assume true for now
+//         views: p.views_value,
+//         content: "",
+//         image: "",
+//         featured: false
+//       })),
+//       categories: raw.categories.map(c => ({
+//         id: c.id_no,
+//         name: c.name,
+//         subs: []
+//       })),
+//       comments: raw.comments.map(c => ({
+//         id: c.id_no,
+//         postId: c.postId,
+//         user: c.user_name,
+//         text: c.text,
+//         status: "approved",
+//         date: c.date
+//       })),
+//       messages: raw.messages || [],
+//       analytics: raw.analytics,
+//       activity: raw.activity
+//     };
+
+//     refreshAll();
+//   }
+
+
+
+
+
+
+//   document.addEventListener('DOMContentLoaded', () => {
+//     loadData();
+//   });
+  function saveData() {
+    console.log("In real app: send changes to backend API", DATA);
+  }
+
+
+/* ---------- Initialization ---------- */
+document.addEventListener('DOMContentLoaded',()=>{
+  // wire sidebar nav
+  document.querySelectorAll('.sidebar .menu a').forEach(a=>{
+    a.addEventListener('click',(e)=>{
+      e.preventDefault();
+      document.querySelectorAll('.sidebar .menu a').forEach(x=>x.classList.remove('active'));
+      a.classList.add('active');
+      const sec = a.getAttribute('data-section') || 'overview';
+      showSection(sec);
+    });
+  });
+
+  // wire quick actions
+  document.getElementById('btnAddPost').addEventListener('click', ()=> { showSection('posts'); scrollToElement('#postTitle'); });
+  document.getElementById('qaAddPost').addEventListener('click', ()=> { showSection('posts'); scrollToElement('#postTitle'); });
+  document.getElementById('qaManageUsers').addEventListener('click', ()=> showSection('users'));
+  document.getElementById('qaComments').addEventListener('click', ()=> showSection('comments'));
+  document.getElementById('btnToggleDark').addEventListener('click', ()=> document.body.classList.toggle('dark-mode'));
+  document.getElementById('btnExport').addEventListener('click', exportAll);
+
+  document.getElementById('globalSearch').addEventListener('input', (e)=> globalSearch(e.target.value));
+  document.getElementById('postSearch').addEventListener('input', (e)=> renderPostsTable(e.target.value));
+  document.getElementById('userSearch').addEventListener('input', (e)=> renderUsers(e.target.value));
+  document.getElementById('commentSearch').addEventListener('input', (e)=> renderComments(e.target.value));
+  document.getElementById('refreshPostsBtn').addEventListener('click', ()=> { renderOverviewPosts(); showToast('Refreshed'); });
+
+  // posts
+  document.getElementById('postForm').addEventListener('submit', handleSavePost);
+  document.getElementById('postImage').addEventListener('change', handlePostImage);
+
+  // categories
+  document.getElementById('btnAddCategory').addEventListener('click', addCategory);
+
+  // users
+  document.getElementById('userForm').addEventListener('submit', handleSaveUser);
+  document.getElementById('btnAddUser').addEventListener('click', ()=> openUserForm());
+
+  // bulk selects
+  document.getElementById('selectAllPosts').addEventListener('change', (e)=>{
+    document.querySelectorAll('#postsTable tbody input[type=checkbox]').forEach(cb=>cb.checked = e.target.checked);
+  });
+  document.getElementById('btnBulkDeletePosts').addEventListener('click', bulkDeletePosts);
+
+  document.getElementById('selectAllUsers').addEventListener('change', (e)=>{
+    document.querySelectorAll('#usersTable tbody input[type=checkbox]').forEach(cb=>cb.checked = e.target.checked);
+  });
+  document.getElementById('btnBulkDeleteUsers').addEventListener('click', bulkDeleteUsers);
+
+  // comments, messages
+  document.getElementById('commentSearch').addEventListener('input', (e)=> renderComments(e.target.value));
+
+  // settings
+  document.getElementById('settingsForm').addEventListener('submit', (ev)=> { ev.preventDefault(); saveSettings(); });
+
+  document.getElementById('btnClearData').addEventListener('click', ()=> { if(confirm('Clear all demo data?')) { localStorage.removeItem(STORAGE_KEY); DATA = loadData(); refreshAll(); showToast('Demo data cleared'); }});
+  document.getElementById('btnBackup').addEventListener('click', downloadBackup);
+
+  // QA button routing
+  document.getElementById('qaComments').addEventListener('click', ()=> showSection('comments'));
+
+  // init
+  refreshAll();
+});
+
+/* ---------- UI navigation ---------- */
+function showSection(name){
+  const sections = ['overview','posts','categories','users','comments','messages','analytics','settings'];
+  sections.forEach(s=>{
+    const el = document.getElementById('section-'+s);
+    if(el) el.style.display = (s===name ? '' : 'none');
+  });
+  // special: render dynamic content
+  if(name==='posts') { renderPostsTable(); renderCategoriesSelect();}
+  if(name==='categories') renderCategories();
+  if(name==='users') renderUsers();
+  if(name==='comments') renderComments();
+  if(name==='messages') renderMessages();
+  if(name==='analytics') renderAnalytics();
+  if(name==='overview') refreshAll();
+  if(name==='settings') renderSettings();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function scrollToElement(sel){ const el = document.querySelector(sel); if(el) el.scrollIntoView({behavior:'smooth', block:'center'}); }
+
+/* ---------- Renderers ---------- */
+function refreshAll(){
+  renderStats();
+  renderOverviewPosts();
+  renderPostsTable();
+  renderCategories();
+  renderCategoriesSelect();
+  renderUsers();
+  renderComments();
+  renderMessages();
+  renderAnalytics();
+}
+
+/* Stats */
+function renderStats(){
+  document.getElementById('stat-users').innerText = DATA.users.length;
+  document.getElementById('stat-posts').innerText = DATA.posts.length;
+  document.getElementById('stat-comments').innerText = DATA.comments.length;
+  const sum = DATA.analytics.viewsLast14.reduce((a,b)=>a+b,0);
+  document.getElementById('stat-views').innerText = sum;
+}
+
+/* Overview posts */
+function renderOverviewPosts(){
+  const tbody = document.querySelector('#overviewPostsTable tbody');
+  tbody.innerHTML='';
+  DATA.posts.slice(0,10).forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(p.title)}</td>
+      <td>${escapeHtml(p.author)}</td>
+      <td>${escapeHtml(p.category||'—')}</td>
+      <td>${p.published ? '<span class="badge bg-success">Published</span>' : '<span class="badge bg-secondary">Draft</span>'}</td>
+      <td>${p.views||0}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="editPost('${p.id}')"><i class="fa fa-edit"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deletePost('${p.id}')"><i class="fa fa-trash"></i></button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Posts table */
+function renderPostsTable(filter=''){
+  const tbody = document.querySelector('#postsTable tbody');
+  tbody.innerHTML='';
+  DATA.posts.filter(p => p.title.toLowerCase().includes((filter||'').toLowerCase())).forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="checkbox" data-id="${p.id}"></td>
+      <td>${escapeHtml(p.title)}</td>
+      <td>${escapeHtml(p.author)}</td>
+      <td>${escapeHtml(p.category||'—')}</td>
+      <td>${p.published ? '<span class="badge bg-success">Published</span>' : '<span class="badge bg-secondary">Draft</span>'}</td>
+      <td>${p.views||0}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="editPost('${p.id}')"><i class="fa fa-edit"></i></button>
+        <button class="btn btn-sm btn-outline-secondary me-1" onclick="toggleFeature('${p.id}')">${p.featured ? '<i class="fa fa-star text-warning"></i>':'<i class="fa fa-star"></i>'}</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deletePost('${p.id}')"><i class="fa fa-trash"></i></button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Categories render */
+function renderCategories(){
+  const wrap = document.getElementById('categoriesList');
+  wrap.innerHTML='';
+  DATA.categories.forEach((c, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'mb-2 p-2 card';
+    card.innerHTML = `
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <strong>${escapeHtml(c.name)}</strong>
+          <div class="muted small">Subcategories: ${c.subs.join(', ') || '—'}</div>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary" onclick="editCategory(${idx})">Edit</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="removeCategory(${idx})">Delete</button>
+        </div>
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+/* populate category select in post form */
+function renderCategoriesSelect(){
+  const sel = document.getElementById('postCategory');
+  sel.innerHTML = '<option value="">(None)</option>';
+  DATA.categories.forEach(c=>{
+    // include main category and subs as options
+    const optMain = document.createElement('option'); optMain.value = c.name; optMain.textContent = c.name; sel.appendChild(optMain);
+    c.subs.forEach(s=>{
+      const opt = document.createElement('option'); opt.value = s; opt.textContent = c.name + ' / ' + s; sel.appendChild(opt);
+    });
+  });
+}
+
+/* Users render */
+function renderUsers(filter=''){
+  const tbody = document.querySelector('#usersTable tbody');
+  tbody.innerHTML='';
+  DATA.users.filter(u => (u.name + ' ' + u.email).toLowerCase().includes((filter||'').toLowerCase())).forEach(u=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="checkbox" data-id="${u.id}"></td>
+      <td><img src="${u.avatar||'https://i.pravatar.cc/40'}" style="width:40px;height:40px;border-radius:50%"></td>
+      <td>${escapeHtml(u.name)}</td>
+      <td>${escapeHtml(u.email)}</td>
+      <td>${escapeHtml(u.role)}</td>
+      <td>${u.joined||'—'}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="openUserForm('${u.id}')"><i class="fa fa-edit"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${u.id}')"><i class="fa fa-trash"></i></button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Comments render */
+function renderComments(filter=''){
+  const tbody = document.querySelector('#commentsTable tbody');
+  tbody.innerHTML='';
+  DATA.comments.filter(c => (c.text + ' ' + c.user).toLowerCase().includes((filter||'').toLowerCase())).forEach(c=>{
+    const post = DATA.posts.find(p=>p.id===c.postId) || {title:'—'};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(c.user)}</td>
+      <td>${escapeHtml(c.text)}</td>
+      <td>${escapeHtml(post.title)}</td>
+      <td>${c.status}</td>
+      <td>
+        ${c.status!=='approved' ? `<button class="btn btn-sm btn-success me-1" onclick="approveComment('${c.id}')">Approve</button>` : ''}
+        <button class="btn btn-sm btn-outline-secondary me-1" onclick="replyCommentPrompt('${c.id}')">Reply</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteComment('${c.id}')">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Messages render */
+function renderMessages(){
+  const tbody = document.querySelector('#messagesTable tbody');
+  tbody.innerHTML='';
+  DATA.messages.forEach(m=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${escapeHtml(m.name)}</td>
+      <td>${escapeHtml(m.email)}</td>
+      <td>${escapeHtml(m.text)}</td>
+      <td>${escapeHtml(m.date||'—')}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="replyMessage('${m.id}')">Reply</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="deleteMessage('${m.id}')">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* Analytics render */
+let trafficChart = null;
+function renderAnalytics(){
+  // chart
+  const ctx = document.getElementById('chartTraffic').getContext('2d');
+  if(trafficChart) trafficChart.destroy();
+  const labels = DATA.analytics.viewsLast14.map((_,i)=>`Day ${i+1}`);
+  trafficChart = new Chart(ctx, {
+    type:'line',
+    data: { labels, datasets:[{ label:'Views', data: DATA.analytics.viewsLast14, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#4caf50', backgroundColor:'rgba(76,175,80,0.12)', tension:0.25 }]},
+    options: { responsive:true, maintainAspectRatio:false }
+  });
+
+  // top posts
+  const top = DATA.posts.slice().sort((a,b)=> (b.views||0) - (a.views||0)).slice(0,6);
+  const ol = document.getElementById('analyticsTopPosts'); ol.innerHTML='';
+  top.forEach(p=> { const li=document.createElement('li'); li.innerText = `${p.title} (${p.views||0})`; ol.appendChild(li); });
+
+  // top authors
+  const map = {};
+  DATA.posts.forEach(p=> map[p.author] = (map[p.author]||0) + (p.views||0));
+  const sortedAuthors = Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const ol2 = document.getElementById('analyticsTopAuthors'); ol2.innerHTML='';
+  sortedAuthors.forEach(([name,v])=> { const li=document.createElement('li'); li.innerText = `${name} (${v})`; ol2.appendChild(li)});
+}
+
+/* Settings */
+function renderSettings(){
+  document.getElementById('settingSiteTitle').value = DATA.settings.siteTitle || '';
+  document.getElementById('settingFooterText').value = DATA.settings.footerText || '';
+  document.getElementById('settingPerPage').value = DATA.settings.perPage || 9;
+}
+
+/* Activity list render */
+function renderActivity(){
+  const ul = document.getElementById('activityList'); ul.innerHTML='';
+  DATA.activity.slice().reverse().forEach(a=>{
+    const li = document.createElement('li'); li.className='list-group-item'; li.textContent = a; ul.appendChild(li);
+  });
+}
+
+/* ---------- Actions: Posts ---------- */
+function handlePostImage(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const fr = new FileReader();
+  fr.onload = ()=> {
+    document.getElementById('postImagePreview').src = fr.result;
+    document.getElementById('postImagePreview').style.display = 'block';
+    document.getElementById('postImagePreview').dataset.data = fr.result;
+  };
+  fr.readAsDataURL(file);
+}
+
+function handleSavePost(ev){
+  ev.preventDefault();
+  const id = document.getElementById('postId').value;
+  const title = document.getElementById('postTitle').value.trim();
+  const author = document.getElementById('postAuthor').value.trim();
+  const category = document.getElementById('postCategory').value;
+  const content = document.getElementById('postContent').value;
+  const published = document.getElementById('postPublished').checked;
+  const image = document.getElementById('postImagePreview').dataset.data || '';
+
+  if(!title || !author){ alert('Enter title and author'); return; }
+
+  if(id){
+    const p = DATA.posts.find(x=>x.id===id);
+    if(!p) return;
+    p.title = title; p.author = author; p.category = category; p.content = content; p.published = published; p.image = image;
+    DATA.activity.push(`Post updated: ${title}`);
+  } else {
+    const newPost = { id: uid('p'), title, author, category, content, published, image, views:0, featured:false };
+    DATA.posts.unshift(newPost);
+    DATA.activity.push(`New post created: ${title}`);
+  }
+  saveData(); renderPostsTable(); renderOverviewPosts(); renderAnalytics(); renderActivity(); clearPostForm();
+}
+
+function clearPostForm(){
+  document.getElementById('postId').value='';
+  document.getElementById('postTitle').value='';
+  document.getElementById('postAuthor').value='';
+  document.getElementById('postCategory').value='';
+  document.getElementById('postContent').value='';
+  document.getElementById('postPublished').checked=false;
+  document.getElementById('postImage').value='';
+  const preview = document.getElementById('postImagePreview');
+  preview.src=''; preview.style.display='none'; preview.dataset.data='';
+}
+
+function editPost(id){
+  const p = DATA.posts.find(x=>x.id===id);
+  if(!p) return;
+  showSection('posts');
+  document.getElementById('postId').value = p.id;
+  document.getElementById('postTitle').value = p.title;
+  document.getElementById('postAuthor').value = p.author;
+  document.getElementById('postCategory').value = p.category;
+  document.getElementById('postContent').value = p.content;
+  document.getElementById('postPublished').checked = !!p.published;
+  if(p.image){ document.getElementById('postImagePreview').src = p.image; document.getElementById('postImagePreview').style.display='block'; document.getElementById('postImagePreview').dataset.data = p.image; }
+  scrollToElement('#postTitle');
+}
+
+function deletePost(id){
+  if(!confirm('Delete post?')) return;
+  DATA.posts = DATA.posts.filter(p=>p.id!==id);
+  DATA.activity.push('Post deleted');
+  saveData(); renderPostsTable(); renderOverviewPosts(); renderAnalytics(); renderActivity();
+}
+
+function toggleFeature(id){
+  const p = DATA.posts.find(x=>x.id===id); if(!p) return;
+  p.featured = !p.featured;
+  DATA.activity.push(`${p.featured ? 'Featured':'Unfeatured'} post: ${p.title}`);
+  saveData(); renderPostsTable(); renderOverviewPosts(); renderActivity();
+}
+
+function bulkDeletePosts(){
+  const checked = Array.from(document.querySelectorAll('#postsTable tbody input[type=checkbox]:checked')).map(cb=>cb.dataset.id);
+  if(!checked.length){ alert('Select posts'); return; }
+  if(!confirm(`Delete ${checked.length} posts?`)) return;
+  DATA.posts = DATA.posts.filter(p=>!checked.includes(p.id));
+  DATA.activity.push(`${checked.length} posts deleted`);
+  saveData(); renderPostsTable(); renderOverviewPosts(); renderActivity();
+}
+
+/* ---------- Actions: Categories ---------- */
+function addCategory(){
+  const v = document.getElementById('categoryInput').value.trim();
+  if(!v) return alert('Enter category name');
+  if(DATA.categories.some(c=>c.name.toLowerCase()===v.toLowerCase())) return alert('Category exists');
+  DATA.categories.push({ id: uid('c'), name: v, subs: [] });
+  DATA.activity.push(`Category added: ${v}`);
+  saveData(); renderCategories(); renderCategoriesSelect(); document.getElementById('categoryInput').value='';
+}
+function editCategory(i){
+  const name = prompt('Edit category name', DATA.categories[i].name);
+  if(name && name.trim()){ DATA.categories[i].name=name.trim(); saveData(); renderCategories(); renderCategoriesSelect(); DATA.activity.push('Category edited'); renderActivity(); }
+}
+function removeCategory(i){
+  if(!confirm('Delete category?')) return;
+  const name = DATA.categories.splice(i,1);
+  DATA.activity.push('Category removed: '+name);
+  saveData(); renderCategories(); renderCategoriesSelect(); renderActivity();
+}
+
+/* ---------- Actions: Users ---------- */
+function openUserForm(id){
+  const form = document.getElementById('userForm');
+  if(id){
+    const u = DATA.users.find(x=>x.id===id);
+    document.getElementById('userId').value = u.id;
+    document.getElementById('userName').value = u.name;
+    document.getElementById('userEmail').value = u.email;
+    document.getElementById('userRole').value = u.role;
+    scrollToElement('#userName');
+  } else {
+    document.getElementById('userId').value=''; document.getElementById('userName').value=''; document.getElementById('userEmail').value=''; document.getElementById('userRole').value='user';
+    scrollToElement('#userName');
+  }
+}
+function handleSaveUser(ev){
+  ev.preventDefault();
+  const id = document.getElementById('userId').value;
+  const name = document.getElementById('userName').value.trim();
+  const email = document.getElementById('userEmail').value.trim();
+  const role = document.getElementById('userRole').value;
+  if(!name||!email) return alert('Enter name & email');
+  if(id){
+    const u = DATA.users.find(x=>x.id===id); u.name=name; u.email=email; u.role=role; DATA.activity.push('User updated: '+name);
+  } else {
+    DATA.users.push({ id: uid('u'), name, email, role, joined:(new Date()).toISOString().split('T')[0], avatar:'https://i.pravatar.cc/48?u='+encodeURIComponent(email) });
+    DATA.activity.push('User added: '+name);
+  }
+  saveData(); renderUsers(); renderStats(); renderActivity();
+  document.getElementById('userForm').reset();
+}
+
+function deleteUser(id){
+  if(!confirm('Delete user?')) return;
+  DATA.users = DATA.users.filter(u=>u.id!==id);
+  DATA.activity.push('User deleted');
+  saveData(); renderUsers(); renderStats(); renderActivity();
+}
+function bulkDeleteUsers(){
+  const checked = Array.from(document.querySelectorAll('#usersTable tbody input[type=checkbox]:checked')).map(cb=>cb.dataset.id);
+  if(!checked.length) return alert('Select users');
+  if(!confirm(`Delete ${checked.length} users?`)) return;
+  DATA.users = DATA.users.filter(u=>!checked.includes(u.id));
+  DATA.activity.push(`${checked.length} users deleted`);
+  saveData(); renderUsers(); renderStats(); renderActivity();
+}
+
+/* ---------- Comments ---------- */
+function approveComment(id){
+  const c = DATA.comments.find(x=>x.id===id);
+  if(!c) return;
+  c.status='approved'; DATA.activity.push('Comment approved'); saveData(); renderComments(); renderActivity();
+}
+function replyCommentPrompt(id){
+  const txt = prompt('Reply to comment (this will add as a new comment reply)', 'Thanks for your comment!');
+  if(!txt) return;
+  const c = DATA.comments.find(x=>x.id===id);
+  if(!c) return;
+  const reply = { id: uid('cm'), postId: c.postId, user:'Owner', text: 'Reply: '+txt, status:'approved', date: (new Date()).toISOString().split('T')[0] };
+  DATA.comments.push(reply); DATA.activity.push('Replied to comment'); saveData(); renderComments(); renderActivity();
+}
+function deleteComment(id){
+  if(!confirm('Delete comment?')) return;
+  DATA.comments = DATA.comments.filter(c=>c.id!==id);
+  DATA.activity.push('Comment deleted');
+  saveData(); renderComments(); renderActivity();
+}
+
+/* ---------- Messages ---------- */
+function replyMessage(id){
+  const m = DATA.messages.find(x=>x.id===id);
+  if(!m) return;
+  const txt = prompt(`Reply to ${m.name} (${m.email})`, `Hi ${m.name},\nThanks for getting in touch!`);
+  if(!txt) return;
+  // In real app: send email; here we just log activity
+  DATA.activity.push(`Replied to message from ${m.name}`);
+  saveData(); renderMessages(); renderActivity(); showToast('Reply logged (demo)');
+}
+function deleteMessage(id){
+  if(!confirm('Delete message?')) return;
+  DATA.messages = DATA.messages.filter(m=>m.id!==id);
+  DATA.activity.push('Message deleted');
+  saveData(); renderMessages(); renderActivity();
+}
+
+/* ---------- Settings ---------- */
+function saveSettings(){
+  DATA.settings.siteTitle = document.getElementById('settingSiteTitle').value || DATA.settings.siteTitle;
+  DATA.settings.footerText = document.getElementById('settingFooterText').value || DATA.settings.footerText;
+  DATA.settings.perPage = parseInt(document.getElementById('settingPerPage').value) || DATA.settings.perPage;
+  DATA.activity.push('Settings updated');
+  saveData(); renderActivity(); showToast('Settings saved');
+}
+
+/* ---------- Utilities ---------- */
+function escapeHtml(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ---------- Import/Export ---------- */
+function exportAll(){
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'site-backup.json'; a.click(); URL.revokeObjectURL(url);
+  showToast('Export downloaded');
+}
+function downloadBackup(){
+  exportAll();
+}
+
+/* ---------- Backup restore / clear ---------- */
+/* (clear implemented earlier) */
+
+/* ---------- Quick global search ---------- */
+function globalSearch(q){
+  q = (q||'').trim().toLowerCase();
+  if(!q){ refreshAll(); return; }
+  renderPostsTable(q); renderUsers(q); renderComments(q);
+}
+
+/* ---------- Misc ---------- */
+function editCategoryByName(name){
+  const idx = DATA.categories.findIndex(c=>c.name===name);
+  if(idx>=0) editCategory(idx);
+}
+
+/* ---------- Initial render call ---------- */
+(function init(){
+  // ensure selects and forms have data
+  renderCategoriesSelect();
+  refreshAll();
+  renderActivity();
+})();
+
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

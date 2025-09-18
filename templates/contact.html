@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% block title%}Contact{% endblock %}
+{% block content %}
+<section id="contactpage">
+    <section class="contact-section container py-5">
+
+        <h1 class="mb-4 text-center fw-bold text-success">Contact Us</h1>
+
+        <div class="row">
+            <!-- Contact Form -->
+            <div class="col-lg-6 mb-4">
+                <form class="shadow p-4 rounded contact-form">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Your Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Your Email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="subject" placeholder="Subject">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" id="message" rows="5"
+                            placeholder="Write your message..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Send Message</button>
+                </form>
+            </div>
+
+            <!-- Address + FAQ -->
+            <div class="col-lg-6">
+                <div class="mb-4 p-4 shadow rounded address-section">
+                    <h4 class="fw-bold text-success mb-3">Our Address</h4>
+                    <p>Shubham Singh, MyBlog Pvt. Ltd.<br>
+                        123, Tech Street, Lucknow, India<br>
+                        Email: contact@myblog.com<br>
+                        Phone: +91 9876543210</p>
+                </div>
+
+                <div class="faq-section shadow p-4 rounded">
+                    <h4 class="fw-bold text-success mb-3">Frequently Asked Questions</h4>
+
+                    <details>
+                        <summary>How can I collaborate with MyBlog?</summary>
+                        <p>Just send us a message via the contact form, we’ll get back to you soon.</p>
+                    </details>
+
+                    <details>
+                        <summary>Do you accept guest posts?</summary>
+                        <p>Yes, we do! Email us your article idea and we will review it.</p>
+                    </details>
+
+                    <details>
+                        <summary>What is your response time?</summary>
+                        <p>Usually within 24-48 hours, depending on the inquiry.</p>
+                    </details>
+
+                    <details>
+                        <summary>Can I advertise on MyBlog?</summary>
+                        <p>Yes, we offer sponsored content and ads. Please contact us for rates.</p>
+                    </details>
+
+                    <details>
+                        <summary>How can I report an issue?</summary>
+                        <p>If you find any problem with the site or content, please contact us immediately.</p>
+                    </details>
+
+                    <details>
+                        <summary>Can I suggest a topic for a blog?</summary>
+                        <p>Absolutely! We love ideas from our readers. Use the contact form to suggest.</p>
+                    </details>
+
+                    <details>
+                        <summary>Do you have social media channels?</summary>
+                        <p>Yes, follow us on Instagram, Twitter, and Facebook for latest updates.</p>
+                    </details>
+
+                    <details>
+                        <summary>Is my personal information safe?</summary>
+                        <p>Yes, we respect your privacy and never share your information.</p>
+                    </details>
+
+                    <details>
+                        <summary>Can I subscribe to newsletter?</summary>
+                        <p>Yes! Enter your email in the footer subscription section to receive updates.</p>
+                    </details>
+
+                    <details>
+                        <summary>Do you provide content in other languages?</summary>
+                        <p>Currently, we publish content in English only, but we may expand in the future.</p>
+                    </details>
+
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
