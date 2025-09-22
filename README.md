@@ -91,8 +91,6 @@ python manage.py runserver
 - Implement better error pages (404, 500) and form validation on contact page.
 
 ## Screenshots
-Add screenshots to the repository under `/screenshots` and include them in the README. Example:
-markdown
 ![Homepage](/screenshots/homepage.png)
 ![Blog post](/screenshots/post.png)
 
