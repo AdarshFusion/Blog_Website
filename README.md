@@ -109,5 +109,4 @@ Project maintained by Adarsh. Update the `Contact` page or README with the best 
 
 ---
 
-*README generated based on the live site at https://29adarsh.pythonanywhere.com/ — update this document with exact tech / dependency details from your repository.*
 
