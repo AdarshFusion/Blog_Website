@@ -92,10 +92,10 @@ python manage.py runserver
 
 ## Screenshots
 Add screenshots to the repository under `/screenshots` and include them in the README. Example:
-```markdown
+markdown
 ![Homepage](/screenshots/homepage.png)
 ![Blog post](/screenshots/post.png)
-```
+
 
 ## Contribution
 If you want to contribute:
